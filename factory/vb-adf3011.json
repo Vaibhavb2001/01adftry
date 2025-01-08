@@ -1,0 +1,9 @@
+{
+	"name": "vb-adf3011",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "d68bc51b-5f4c-431a-afac-4dc8144be5a3",
+		"tenantId": "1c2c430b-612f-440b-a54c-a2782225f416"
+	}
+}

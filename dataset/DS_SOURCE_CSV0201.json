@@ -1,0 +1,25 @@
+{
+	"name": "DS_SOURCE_CSV0201",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DLGEN",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Sample_Data.csv",
+				"folderPath": "sf1d0201",
+				"fileSystem": "input0201"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
