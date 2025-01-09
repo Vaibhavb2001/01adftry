@@ -1,5 +1,5 @@
 {
-	"name": "COPY_PARAM_GN",
+	"name": "COPY_PARAM_GN2",
 	"properties": {
 		"activities": [
 			{
@@ -54,9 +54,18 @@
 						"referenceName": "DS_PARAM_S3011GEN2",
 						"type": "DatasetReference",
 						"parameters": {
-							"CONTAINER": "input0201",
-							"DIRECTORY": "sf1d0201",
-							"FILENAME": "Sample_Data.csv"
+							"CONTAINER": {
+								"value": "@pipeline().parameters.SOURCECONTAINER",
+								"type": "Expression"
+							},
+							"DIRECTORY": {
+								"value": "@pipeline().parameters.SOURCEDIRECTORY",
+								"type": "Expression"
+							},
+							"FILENAME": {
+								"value": "@pipeline().parameters.SOURCEFILENAME",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -65,14 +74,43 @@
 						"referenceName": "DS_PARAM_S3011GEN2",
 						"type": "DatasetReference",
 						"parameters": {
-							"CONTAINER": "output",
-							"DIRECTORY": "samplefolder/folder1",
-							"FILENAME": "sampledata1.csv"
+							"CONTAINER": {
+								"value": "@pipeline().parameters.SINKCONTAINER",
+								"type": "Expression"
+							},
+							"DIRECTORY": {
+								"value": "@pipeline().parameters.SINKDIRECTORY",
+								"type": "Expression"
+							},
+							"FILENAME": {
+								"value": "@pipeline().parameters.SINKFILENAME",
+								"type": "Expression"
+							}
 						}
 					}
 				]
 			}
 		],
+		"parameters": {
+			"SOURCECONTAINER": {
+				"type": "string"
+			},
+			"SOURCEDIRECTORY": {
+				"type": "string"
+			},
+			"SOURCEFILENAME": {
+				"type": "string"
+			},
+			"SINKCONTAINER": {
+				"type": "string"
+			},
+			"SINKDIRECTORY": {
+				"type": "string"
+			},
+			"SINKFILENAME": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
