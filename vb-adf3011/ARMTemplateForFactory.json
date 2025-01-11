@@ -349,6 +349,8 @@
 					{
 						"name": "Copy data1",
 						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -433,6 +435,8 @@
 					{
 						"name": "Copy data1",
 						"type": "Copy",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -803,6 +807,8 @@
 					{
 						"name": "ForEach1",
 						"type": "ForEach",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
@@ -912,7 +918,7 @@
 								"Inputfile": "ABDATA1.csv",
 								"Inputcontainer": "cont1",
 								"Inputdirectory": "subfolder",
-								"Outputfile": ".csv",
+								"Outputfile": ".ABDATA1csv",
 								"Outputcontainer": "folderforeach",
 								"Outputdirectory": "subfolder"
 							},
@@ -920,17 +926,17 @@
 								"Inputfile": "Sample_Data.csv",
 								"Inputcontainer": "cont1",
 								"Inputdirectory": "subfolder",
-								"Outputfile": ".csv",
+								"Outputfile": "Sample_Data.csv",
 								"Outputcontainer": "folderforeach",
-								"Outputdirectory": "subfolder"
+								"Outputdirectory": "subfolder2"
 							},
 							{
 								"Inputfile": "Purc_data.csv",
 								"Inputcontainer": "cont1",
 								"Inputdirectory": "subfolder",
-								"Outputfile": ".csv",
+								"Outputfile": "Department.csv",
 								"Outputcontainer": "folderforeach",
-								"Outputdirectory": "subfolder"
+								"Outputdirectory": "subfolder3"
 							}
 						]
 					}
