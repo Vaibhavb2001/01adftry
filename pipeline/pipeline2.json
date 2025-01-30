@@ -1,5 +1,5 @@
 {
-	"name": "COPY_0501_GNTOSQL",
+	"name": "pipeline2",
 	"properties": {
 		"activities": [
 			{
@@ -30,24 +30,44 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "truncate table [DATA].[EXPDATA1]",
+						"preCopyScript": "truncate table dbo.metadata",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
-						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_SOURCE_CSVTOSQL",
-						"type": "DatasetReference"
+						"referenceName": "DS_PARAM_S3011GEN2",
+						"type": "DatasetReference",
+						"parameters": {
+							"CONTAINER": "cont1",
+							"DIRECTORY": "subfolder",
+							"FILENAME": "metadata.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "dbo",
+							"tablename": "metadata"
+						}
 					}
 				]
 			}
 		],
-		"annotations": [],
-		"lastPublishTime": "2025-01-05T09:49:36Z"
-	},
-	"type": "Microsoft.DataFactory/factories/pipelines"
+		"annotations": []
+	}
 }

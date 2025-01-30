@@ -7,7 +7,14 @@
 				"type": "ForEach",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
@@ -103,6 +110,138 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "dbo",
+							"tablename": "metadata"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach2",
+				"type": "ForEach",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_PARAM_S3011GEN2",
+									"type": "DatasetReference",
+									"parameters": {
+										"CONTAINER": {
+											"value": "@item().Outputcontainer",
+											"type": "Expression"
+										},
+										"DIRECTORY": {
+											"value": "@item().Outputdirectory",
+											"type": "Expression"
+										},
+										"FILENAME": {
+											"value": "@item().Outputfile",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SQL",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": {
+											"value": "@item().sqlschema",
+											"type": "Expression"
+										},
+										"tablename": {
+											"value": "@item().sqlfilename",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
 			}
 		],
 		"variables": {
@@ -113,15 +252,15 @@
 						"Inputfile": "ABDATA1.csv",
 						"Inputcontainer": "cont1",
 						"Inputdirectory": "subfolder",
-						"Outputfile": ".ABDATA1csv",
+						"Outputfile": "abdata.csv",
 						"Outputcontainer": "folderforeach",
-						"Outputdirectory": "subfolder"
+						"Outputdirectory": "subfolder1"
 					},
 					{
 						"Inputfile": "Sample_Data.csv",
 						"Inputcontainer": "cont1",
 						"Inputdirectory": "subfolder",
-						"Outputfile": "Sample_Data.csv",
+						"Outputfile": "Sample_Data1.csv",
 						"Outputcontainer": "folderforeach",
 						"Outputdirectory": "subfolder2"
 					},
