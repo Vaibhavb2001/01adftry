@@ -8,6 +8,9 @@
 		"LS_AzureSqlDatabase1_password": {
 			"value": ""
 		},
+		"LS_AzureSqlDatabase2_password": {
+			"value": ""
+		},
 		"LS_BLOB_0201_connectionString": {
 			"value": ""
 		},
@@ -21,6 +24,15 @@
 			"value": "cloudsqldatab"
 		},
 		"LS_AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "vb050125"
+		},
+		"LS_AzureSqlDatabase2_properties_typeProperties_server": {
+			"value": "sqlvb0125.database.windows.net"
+		},
+		"LS_AzureSqlDatabase2_properties_typeProperties_database": {
+			"value": "sqldatab1"
+		},
+		"LS_AzureSqlDatabase2_properties_typeProperties_userName": {
 			"value": "vb050125"
 		},
 		"LS_DLGEN_properties_typeProperties_url": {

@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LS_AzureSqlDatabase1'"
 		},
+		"LS_AzureSqlDatabase2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_AzureSqlDatabase2'"
+		},
 		"LS_BLOB_0201_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_BLOB_0201'"
@@ -28,6 +32,18 @@
 			"defaultValue": "cloudsqldatab"
 		},
 		"LS_AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "vb050125"
+		},
+		"LS_AzureSqlDatabase2_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlvb0125.database.windows.net"
+		},
+		"LS_AzureSqlDatabase2_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sqldatab1"
+		},
+		"LS_AzureSqlDatabase2_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "vb050125"
 		},
@@ -82,6 +98,28 @@
 					"password": {
 						"type": "SecureString",
 						"value": "[parameters('LS_AzureSqlDatabase1_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_AzureSqlDatabase2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('LS_AzureSqlDatabase2_properties_typeProperties_server')]",
+					"database": "[parameters('LS_AzureSqlDatabase2_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_AzureSqlDatabase2_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_AzureSqlDatabase2_password')]"
 					}
 				}
 			},
@@ -373,24 +411,38 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQLDB')]",
+			"name": "[concat(parameters('factoryName'), '/DS_SQL')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "LS_AzureSqlDatabase1",
+					"referenceName": "LS_AzureSqlDatabase2",
 					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string"
+					},
+					"tablename": {
+						"type": "string"
+					}
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
 				"typeProperties": {
-					"schema": "DATA",
-					"table": "EXPDATA1"
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tablename",
+						"type": "Expression"
+					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDatabase1')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_AzureSqlDatabase2')]"
 			]
 		},
 		{
@@ -656,26 +708,11 @@
 								"tableOption": "autoCreate",
 								"disableMetricsCollection": false
 							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
+							"enableStaging": false
 						},
 						"inputs": [
 							{
 								"referenceName": "DS_SOURCE_CSVTOSQL",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_SQLDB",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -689,8 +726,7 @@
 				"lastPublishTime": "2025-01-05T09:49:36Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_SOURCE_CSVTOSQL')]",
-				"[concat(variables('factoryId'), '/datasets/DS_SQLDB')]"
+				"[concat(variables('factoryId'), '/datasets/DS_SOURCE_CSVTOSQL')]"
 			]
 		},
 		{
@@ -1124,155 +1160,6 @@
 				"[concat(variables('factoryId'), '/datasets/DS_SINK_SALEPURCH')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SOURCE_EXPDATA')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SINK_EXPDATA')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_FOREACH_COPY')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@variables('metadata')",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data1_copy1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": true,
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "DS_PARAM_S3011GEN2",
-											"type": "DatasetReference",
-											"parameters": {
-												"CONTAINER": {
-													"value": "@item().Inputcontainer",
-													"type": "Expression"
-												},
-												"DIRECTORY": {
-													"value": "@item().Inputdirectory",
-													"type": "Expression"
-												},
-												"FILENAME": {
-													"value": "@item().Inputfile",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "DS_PARAM_S3011GEN2",
-											"type": "DatasetReference",
-											"parameters": {
-												"CONTAINER": {
-													"value": "@item().Outputcontainer",
-													"type": "Expression"
-												},
-												"DIRECTORY": {
-													"value": "@item().Outputdirectory",
-													"type": "Expression"
-												},
-												"FILENAME": {
-													"value": "@item().Outputfile",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"metadata": {
-						"type": "Array",
-						"defaultValue": [
-							{
-								"Inputfile": "ABDATA1.csv",
-								"Inputcontainer": "cont1",
-								"Inputdirectory": "subfolder",
-								"Outputfile": ".ABDATA1csv",
-								"Outputcontainer": "folderforeach",
-								"Outputdirectory": "subfolder"
-							},
-							{
-								"Inputfile": "Sample_Data.csv",
-								"Inputcontainer": "cont1",
-								"Inputdirectory": "subfolder",
-								"Outputfile": "Sample_Data.csv",
-								"Outputcontainer": "folderforeach",
-								"Outputdirectory": "subfolder2"
-							},
-							{
-								"Inputfile": "Purc_data.csv",
-								"Inputcontainer": "cont1",
-								"Inputdirectory": "subfolder",
-								"Outputfile": "Department.csv",
-								"Outputcontainer": "folderforeach",
-								"Outputdirectory": "subfolder3"
-							}
-						]
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_PARAM_S3011GEN2')]"
 			]
 		}
 	]
