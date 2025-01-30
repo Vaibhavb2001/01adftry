@@ -948,7 +948,7 @@
 						"name": "ForEach2",
 						"type": "ForEach",
 						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
+						"onInactiveMarkAs": "Failed",
 						"dependsOn": [
 							{
 								"activity": "ForEach1",
